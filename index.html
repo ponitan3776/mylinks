@@ -2,20 +2,25 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; transition: 0.5s; }
         .hero { margin: 40px 0; }
-        .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
-        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; }
-        .btn:hover { background: #e11d48; }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 0 auto; border: 2px solid #334155; }
-        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px; }
+        #greeting { font-size: 1.1rem; color: #fb7185; margin-bottom: 10px; font-weight: bold; }
+        .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
+        .btn:hover { background: #e11d48; transform: scale(1.05); }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 20px auto; border: 2px solid #334155; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: #fb7185; background: #334155; }
+        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; }
+        h2 { margin-top: 0; color: #f472b6; }
     </style>
 </head>
 <body>
 
     <div class="hero">
+        <div id="greeting"></div>
         <h1>my-link-portal</h1>
         <p>好きなBGMを選んでスタート！</p>
         
@@ -30,13 +35,26 @@
 
     <a class="card" href="https://nakamura.onrender.com" target="_blank">
         <h2>キャンディブラスト</h2>
-        <p>試作プロジェクトなので、バグや物足りない部分がありますがアップデートを重ねて面白くしていけるようにしたいです！新しい機能の案が言ったら言ってね</p>
+        <p style="line-height: 1.6;">試作プロジェクトなので、バグや物足りない部分がありますがアップデートを重ねて面白くしていけるようにしたいです！新しい機能の案があったらぜひ教えてくださいね。</p>
         <div class="update-info">
             <strong>Version:</strong> v0.0.1 | <strong>Last Update:</strong> 2026年7月12日
         </div>
     </a>
 
     <script>
+        // 時刻による挨拶
+        function setGreeting() {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('greeting');
+            if (hour >= 5 && hour < 12) {
+                greetingEl.innerText = "おはよう！今日も開発頑張ろう！";
+            } else if (hour >= 12 && hour < 18) {
+                greetingEl.innerText = "こんにちは！いい気分ですね！";
+            } else {
+                greetingEl.innerText = "こんばんは！ゆっくりしていってね。";
+            }
+        }
+
         function playMusic(url) {
             const audio = document.getElementById('bgm');
             audio.src = url;
@@ -47,6 +65,8 @@
             audio.pause();
             audio.currentTime = 0;
         }
+
+        setGreeting();
     </script>
 </body>
 </html>
