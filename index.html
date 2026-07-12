@@ -2,42 +2,51 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Projects Portfolio</title>
+    <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .hero { margin: 60px 0; }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; color: #fb7185; }
-        .btn { background: #fb7185; border: none; padding: 15px 30px; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
-        .btn:hover { background: #e11d48; transform: scale(1.05); }
-        .grid { display: flex; justify-content: center; max-width: 600px; margin: 0 auto; }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; transition: 0.3s; width: 100%; border: 2px solid #334155; }
-        .card:hover { transform: translateY(-10px); border-color: #fb7185; background: #334155; }
-        h2 { margin-top: 0; color: #f472b6; }
-        /* アップデート情報のスタイル */
-        .update-info { font-size: 0.85rem; color: #94a3b8; margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px; }
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .hero { margin: 40px 0; }
+        .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
+        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; }
+        .btn:hover { background: #e11d48; }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 0 auto; border: 2px solid #334155; }
+        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="hero">
-        <h1>Welcome to My World</h1>
-        <button class="btn" onclick="document.getElementById('bgm').play()">音楽を再生してスタート</button>
-        <audio id="bgm" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+        <h1>my-link-portal</h1>
+        <p>好きなBGMを選んでスタート！</p>
+        
+        <div class="music-controls">
+            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">Chill</button>
+            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')">Upbeat</button>
+            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3')">Relax</button>
+            <button class="btn" onclick="stopMusic()">Stop</button>
+        </div>
+        <audio id="bgm" loop></audio>
     </div>
 
-    <div class="grid">
-        <a class="card" href="https://nakamura.onrender.com" target="_blank">
-            <h2>キャンディブラスト</h2>
-            <p>試作プロジェクトなので、バグ物足りないものがありますが、入れていきます!</p>
-            
-            <!-- ここを手動で書き換えてください -->
-            <div class="update-info">
-                最新アップデート: 新しいステージ追加<br>
-                更新日: 2026年7月12日
-            </div>
-        </a>
-    </div>
+    <a class="card" href="https://nakamura.onrender.com" target="_blank">
+        <h2>キャンディブラスト</h2>
+        <p>試作プロジェクトなので、バグや物足りない部分がありますがアップデートを重ねて面白くしていけるようにしたいです！新しい機能の案が言ったら言ってね</p>
+        <div class="update-info">
+            <strong>Version:</strong> v0.0.1 | <strong>Last Update:</strong> 2026年7月12日
+        </div>
+    </a>
 
+    <script>
+        function playMusic(url) {
+            const audio = document.getElementById('bgm');
+            audio.src = url;
+            audio.play();
+        }
+        function stopMusic() {
+            const audio = document.getElementById('bgm');
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    </script>
 </body>
 </html>
