@@ -8,69 +8,50 @@
         body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; }
         .hero { margin: 40px 0; min-height: 150px; }
         
-        /* カーソルがズレないようにインラインで配置 */
-        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; min-height: 2em; }
-        .cursor { display: inline-block; width: 10px; height: 1.5rem; background: #fb7185; animation: blink 0.8s infinite; margin-left: 2px; vertical-align: middle; }
+        /* タイピングエリア：文字が浮き上がる演出 */
+        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; height: 3rem; position: relative; }
+        .romaji { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 1; }
+        .jp { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 0; transform: translateY(20px); }
+        .cursor { display: inline-block; width: 10px; height: 1.5rem; background: #fb7185; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
-        .btn:hover { background: #e11d48; }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 20px auto; border: 2px solid #334155; }
-        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; }
+        /* ...他のCSSはそのまま... */
     </style>
 </head>
 <body>
 
     <div class="hero">
-        <div id="typing-area"></div>
+        <div id="typing-area"><div id="text-container"></div></div>
         <h1>my-link-portal</h1>
-        <div class="music-controls">
-            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">Chill</button>
-            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')">Upbeat</button>
-            <button class="btn" onclick="stopMusic()">Stop</button>
         </div>
-        <audio id="bgm" loop></audio>
-    </div>
-
-    <a class="card" href="https://nakamura.onrender.com" target="_blank">
-        <h2>キャンディブラスト</h2>
-        <p>試作プロジェクトなので、バグや物足りない部分がありますが、ぜひ遊んでみてください！</p>
-        <div class="update-info">
-            <strong>Version:</strong> v0.0.1 | <strong>Last Update:</strong> 2026年7月12日
-        </div>
-    </a>
 
     <script>
-        // ローマ字データと日本語の対応表
-        const typeData = [
-            { romaji: "konnnitiwa", jp: "こんにちは！" },
-            { romaji: "oyasumi", jp: "おやすみ！" },
-            { romaji: "yokkoushiete", jp: "ゆっくりしてって！" }
-        ];
+        const data = { romaji: "konnnitiwa", jp: "こんにちは！" };
 
         async function typeReal() {
-            const el = document.getElementById('typing-area');
-            const data = typeData[Math.floor(Math.random() * typeData.length)];
+            const container = document.getElementById('text-container');
             
-            // ローマ字を1文字ずつ打つ
+            // 1. ローマ字を入力
+            const romajiDiv = document.createElement('div');
+            romajiDiv.className = 'romaji';
+            container.appendChild(romajiDiv);
+            
             for (let i = 0; i <= data.romaji.length; i++) {
-                el.innerHTML = data.romaji.slice(0, i) + '<span class="cursor"></span>';
+                romajiDiv.innerHTML = data.romaji.slice(0, i) + '<span class="cursor"></span>';
                 await new Promise(r => setTimeout(r, 150));
             }
             
-            // 一瞬待ってから日本語に変換
-            await new Promise(r => setTimeout(r, 500));
-            el.innerHTML = data.jp + '<span class="cursor"></span>';
-        }
-
-        function playMusic(url) {
-            const audio = document.getElementById('bgm');
-            audio.src = url;
-            audio.play();
-        }
-        function stopMusic() {
-            document.getElementById('bgm').pause();
+            // 2. 変換アニメーション（ローマ字が上に消え、日本語が現れる）
+            const jpDiv = document.createElement('div');
+            jpDiv.className = 'jp';
+            jpDiv.innerText = data.jp;
+            container.appendChild(jpDiv);
+            
+            await new Promise(r => setTimeout(r, 100));
+            romajiDiv.style.opacity = '0';
+            romajiDiv.style.transform = 'translateY(-20px)';
+            jpDiv.style.opacity = '1';
+            jpDiv.style.transform = 'translateY(0)';
         }
 
         typeReal();
