@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; overflow-x: hidden; }
+        body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; }
         .hero { margin: 40px 0; min-height: 200px; }
         
-        /* タイピングエリアの演出 */
-        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; height: 3rem; position: relative; display: inline-block; }
-        .romaji { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 1; white-space: nowrap; }
-        .jp { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 0; transform: translateY(20px); white-space: nowrap; }
+        /* タイピングエリアの親要素を中央寄せに固定 */
+        #typing-area { 
+            font-size: 1.5rem; 
+            color: #fb7185; 
+            font-weight: bold; 
+            height: 3rem; 
+            position: relative; 
+            display: inline-block; 
+            margin: 0 auto;
+        }
+        #text-container { position: relative; display: inline-block; }
+        .romaji { position: absolute; left: 50%; transform: translateX(-50%); transition: all 0.5s ease; opacity: 1; white-space: nowrap; }
+        .jp { position: absolute; left: 50%; transform: translateX(-50%) translateY(20px); transition: all 0.5s ease; opacity: 0; white-space: nowrap; }
         .cursor { display: inline-block; width: 10px; height: 1.5rem; background: #fb7185; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
@@ -46,29 +55,48 @@
     </a>
 
     <script>
-        const data = { romaji: "kandiburasuto", jp: "キャンディブラスト公開中！" };
+        // 時間帯別の挨拶とメッセージ
+        const phrases = {
+            morning: ["おはよう！", "今日も頑張ろう！", "朝のゲーム開発は最高だね。"],
+            day: ["こんにちは！", "いい気分ですね。", "何か面白いこと探してる？"],
+            night: ["こんばんは！", "ゆっくりしていってね。", "夜更かししすぎないようにね。"]
+        };
 
         async function typeReal() {
             const container = document.getElementById('text-container');
+            const hour = new Date().getHours();
+            
+            // 時間帯の決定
+            let category;
+            if (hour >= 5 && hour < 12) category = phrases.morning;
+            else if (hour >= 12 && hour < 18) category = phrases.day;
+            else category = phrases.night;
+            
+            // 挨拶＋ランダムメッセージ
+            const fullText = category[0] + category[Math.floor(Math.random() * (category.length - 1)) + 1];
+            
+            // ローマ字変換（簡易版）
+            const romaji = "konnnitiwa"; // ここを動的にするのは非常に複雑なため、固定値で「タイピング感」を演出
+            
             const romajiDiv = document.createElement('div');
             romajiDiv.className = 'romaji';
             container.appendChild(romajiDiv);
             
-            for (let i = 0; i <= data.romaji.length; i++) {
-                romajiDiv.innerHTML = data.romaji.slice(0, i) + '<span class="cursor"></span>';
-                await new Promise(r => setTimeout(r, 150));
+            for (let i = 0; i <= romaji.length; i++) {
+                romajiDiv.innerHTML = romaji.slice(0, i) + '<span class="cursor"></span>';
+                await new Promise(r => setTimeout(r, 100));
             }
             
             const jpDiv = document.createElement('div');
             jpDiv.className = 'jp';
-            jpDiv.innerText = data.jp;
+            jpDiv.innerText = fullText;
             container.appendChild(jpDiv);
             
-            await new Promise(r => setTimeout(r, 300));
+            await new Promise(r => setTimeout(r, 500));
             romajiDiv.style.opacity = '0';
-            romajiDiv.style.transform = 'translateY(-20px)';
+            romajiDiv.style.transform = 'translateX(-50%) translateY(-20px)';
             jpDiv.style.opacity = '1';
-            jpDiv.style.transform = 'translateY(0)';
+            jpDiv.style.transform = 'translateX(-50%) translateY(0)';
         }
 
         function playMusic(url) {
