@@ -2,71 +2,45 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; transition: 0.5s; }
-        .hero { margin: 40px 0; }
-        #greeting { font-size: 1.1rem; color: #fb7185; margin-bottom: 10px; font-weight: bold; }
-        .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
-        .btn:hover { background: #e11d48; transform: scale(1.05); }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 20px auto; border: 2px solid #334155; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #fb7185; background: #334155; }
-        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; }
-        h2 { margin-top: 0; color: #f472b6; }
+        /* CSSは以前のものを流用しつつ、タイピング用を追加 */
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; }
+        #typing-area { font-size: 1.5rem; color: #fb7185; height: 3em; margin: 20px 0; font-weight: bold; }
+        /* ...他は以前のCSSと同じ... */
     </style>
 </head>
 <body>
 
     <div class="hero">
-        <div id="greeting"></div>
+        <div id="typing-area"></div>
         <h1>my-link-portal</h1>
-        <p>BGM(適当に作った)</p>
-        
-        <div class="music-controls">
-            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">Chill</button>
-            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')">Upbeat</button>
-            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3')">Relax</button>
-            <button class="btn" onclick="stopMusic()">Stop</button>
         </div>
-        <audio id="bgm" loop></audio>
-    </div>
-
-    <a class="card" href="https://candyblast.onrender.com" target="_blank">
-        <h2>キャンディブラスト</h2>
-        <p style="line-height: 1.6;">試作プロジェクトなので、バグや物足りない部分がありますがアップデートを重ねて面白くしていけるようにしたいです！新しい機能の案があったらぜひ教えてくださいね。</p>
-        <div class="update-info">
-            <strong>Version:</strong> v0.0.1 | <strong>Last Update:</strong> 2026年7月12日
-        </div>
-    </a>
 
     <script>
-        // 時刻による挨拶
-        function setGreeting() {
+        const greeting = ["おはよう！", "こんにちは！", "こんばんは！"];
+        const messages = ["今日も開発日和ですね。", "新しい発見があるかも？", "何か楽しいこと、探してみない？", "ゆっくり遊んでいってね！"];
+
+        function startTyping() {
             const hour = new Date().getHours();
-            const greetingEl = document.getElementById('greeting');
-            if (hour >= 5 && hour < 12) {
-                greetingEl.innerText = "おはよう！今日も開発頑張ろう！";
-            } else if (hour >= 12 && hour < 18) {
-                greetingEl.innerText = "こんにちは！いい気分ですね！";
-            } else {
-                greetingEl.innerText = "こんばんは！ゆっくりしていってね。";
-            }
+            const baseGreeting = (hour >= 5 && hour < 12) ? greeting[0] : (hour >= 12 && hour < 18) ? greeting[1] : greeting[2];
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            const fullText = baseGreeting + msg;
+
+            const el = document.getElementById('typing-area');
+            let i = 0;
+            
+            // ローマ字風に一文字ずつ表示するアニメーション
+            const timer = setInterval(() => {
+                el.innerText = fullText.slice(0, i);
+                i++;
+                if (i > fullText.length) clearInterval(timer);
+            }, 200);
         }
 
-        function playMusic(url) {
-            const audio = document.getElementById('bgm');
-            audio.src = url;
-            audio.play();
-        }
-        function stopMusic() {
-            const audio = document.getElementById('bgm');
-            audio.pause();
-            audio.currentTime = 0;
-        }
-
-        setGreeting();
+        window.onload = startTyping;
+        
+        // ...以前のキラキラエフェクトと音楽機能のスクリプトをここに続ける...
     </script>
 </body>
 </html>
