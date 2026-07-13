@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; }
-        .hero { margin: 40px 0; min-height: 150px; }
+        body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; overflow-x: hidden; }
+        .hero { margin: 40px 0; min-height: 200px; }
         
-        /* タイピングエリア：文字が浮き上がる演出 */
-        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; height: 3rem; position: relative; }
-        .romaji { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 1; }
-        .jp { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 0; transform: translateY(20px); }
+        /* タイピングエリアの演出 */
+        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; height: 3rem; position: relative; display: inline-block; }
+        .romaji { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 1; white-space: nowrap; }
+        .jp { position: absolute; width: 100%; transition: all 0.5s ease; opacity: 0; transform: translateY(20px); white-space: nowrap; }
         .cursor { display: inline-block; width: 10px; height: 1.5rem; background: #fb7185; animation: blink 0.8s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* ...他のCSSはそのまま... */
+        .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; margin: 5px; }
+        .btn:hover { background: #e11d48; transform: scale(1.05); }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 40px auto; border: 2px solid #334155; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: #fb7185; background: #334155; }
+        .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; }
+        h2 { margin-top: 0; color: #f472b6; }
     </style>
 </head>
 <body>
@@ -23,15 +28,28 @@
     <div class="hero">
         <div id="typing-area"><div id="text-container"></div></div>
         <h1>my-link-portal</h1>
+        <div>
+            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">Chill</button>
+            <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3')">Upbeat</button>
+            <button class="btn" onclick="stopMusic()">Stop</button>
         </div>
+        <audio id="bgm" loop></audio>
+    </div>
+
+    <a class="card" href="https://candyblast.onrender.com" target="_blank">
+        <h2>キャンディブラスト</h2>
+        <p>最新アップデートでさらに遊びやすくなりました！ぜひ試してみてください。</p>
+        <div class="update-info">
+            <strong>Version:</strong> v0.0.4 | <strong>Last Update:</strong> 2026/7/13<br>
+            <span style="color:#fb7185;">[ 更新内容: バグ修正、難易度選択、マス目選択を追加 ]</span>
+        </div>
+    </a>
 
     <script>
-        const data = { romaji: "konnnitiwa", jp: "こんにちは！" };
+        const data = { romaji: "kandiburasuto", jp: "キャンディブラスト公開中！" };
 
         async function typeReal() {
             const container = document.getElementById('text-container');
-            
-            // 1. ローマ字を入力
             const romajiDiv = document.createElement('div');
             romajiDiv.className = 'romaji';
             container.appendChild(romajiDiv);
@@ -41,17 +59,25 @@
                 await new Promise(r => setTimeout(r, 150));
             }
             
-            // 2. 変換アニメーション（ローマ字が上に消え、日本語が現れる）
             const jpDiv = document.createElement('div');
             jpDiv.className = 'jp';
             jpDiv.innerText = data.jp;
             container.appendChild(jpDiv);
             
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 300));
             romajiDiv.style.opacity = '0';
             romajiDiv.style.transform = 'translateY(-20px)';
             jpDiv.style.opacity = '1';
             jpDiv.style.transform = 'translateY(0)';
+        }
+
+        function playMusic(url) {
+            const audio = document.getElementById('bgm');
+            audio.src = url;
+            audio.play();
+        }
+        function stopMusic() {
+            document.getElementById('bgm').pause();
         }
 
         typeReal();
