@@ -5,27 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>my-link-portal</title>
     <style>
-        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; }
-        .hero { margin: 40px 0; }
+        body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; }
+        .hero { margin: 40px 0; min-height: 150px; }
         
-        /* タイピングエリアのスタイル */
-        #typing-area { font-size: 1.5rem; color: #fb7185; height: 1.5em; font-weight: bold; }
-        .cursor { display: inline-block; width: 2px; height: 1.5rem; background: white; animation: blink 1s infinite; }
+        /* カーソルがズレないようにインラインで配置 */
+        #typing-area { font-size: 1.5rem; color: #fb7185; font-weight: bold; min-height: 2em; }
+        .cursor { display: inline-block; width: 10px; height: 1.5rem; background: #fb7185; animation: blink 0.8s infinite; margin-left: 2px; vertical-align: middle; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .music-controls { margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .btn { background: #fb7185; border: none; padding: 10px 20px; border-radius: 20px; color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
-        .btn:hover { background: #e11d48; transform: scale(1.05); }
-        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 20px auto; border: 2px solid #334155; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #fb7185; background: #334155; }
+        .btn:hover { background: #e11d48; }
+        .card { background: #1e293b; padding: 30px; border-radius: 20px; text-decoration: none; color: white; display: block; max-width: 600px; margin: 20px auto; border: 2px solid #334155; }
         .update-info { font-size: 0.9rem; color: #94a3b8; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px; }
-        h2 { margin-top: 0; color: #f472b6; }
     </style>
 </head>
 <body>
 
     <div class="hero">
-        <div id="typing-area"><span class="cursor"></span></div>
+        <div id="typing-area"></div>
         <h1>my-link-portal</h1>
         <div class="music-controls">
             <button class="btn" onclick="playMusic('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">Chill</button>
@@ -44,18 +42,26 @@
     </a>
 
     <script>
-        const messages = ["おはよう！今日も開発日和！", "こんにちは！いい気分ですね！", "こんばんは！ゆっくりしていってね！"];
-        
-        async function typeEffect() {
+        // ローマ字データと日本語の対応表
+        const typeData = [
+            { romaji: "konnnitiwa", jp: "こんにちは！" },
+            { romaji: "oyasumi", jp: "おやすみ！" },
+            { romaji: "yokkoushiete", jp: "ゆっくりしてって！" }
+        ];
+
+        async function typeReal() {
             const el = document.getElementById('typing-area');
-            const hour = new Date().getHours();
-            const text = (hour >= 5 && hour < 12) ? messages[0] : (hour >= 12 && hour < 18) ? messages[1] : messages[2];
+            const data = typeData[Math.floor(Math.random() * typeData.length)];
             
-            // 一文字ずつ表示する演出
-            for (let i = 0; i <= text.length; i++) {
-                el.innerHTML = text.slice(0, i) + '<span class="cursor"></span>';
-                await new Promise(r => setTimeout(r, 200));
+            // ローマ字を1文字ずつ打つ
+            for (let i = 0; i <= data.romaji.length; i++) {
+                el.innerHTML = data.romaji.slice(0, i) + '<span class="cursor"></span>';
+                await new Promise(r => setTimeout(r, 150));
             }
+            
+            // 一瞬待ってから日本語に変換
+            await new Promise(r => setTimeout(r, 500));
+            el.innerHTML = data.jp + '<span class="cursor"></span>';
         }
 
         function playMusic(url) {
@@ -67,9 +73,7 @@
             document.getElementById('bgm').pause();
         }
 
-        typeEffect();
-        
-        // キラキラエフェクトは以前のコードのまま...
+        typeReal();
     </script>
 </body>
 </html>
