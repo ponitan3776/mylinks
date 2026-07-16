@@ -54,185 +54,118 @@
     </a>
 
     <script>
-        // ローマ字→かな の変換テーブル（入力途中の状態も含む）
-        // キー：現在の入力文字列、値：[残りの入力文字列, 確定かな]
-        const romajiToKanaMap = {
-            'a': ['', 'あ'], 'i': ['', 'い'], 'u': ['', 'う'], 'e': ['', 'え'], 'o': ['', 'お'],
-            'ka': ['', 'か'], 'ki': ['', 'き'], 'ku': ['', 'く'], 'ke': ['', 'け'], 'ko': ['', 'こ'],
-            'sa': ['', 'さ'], 'si': ['', 'し'], 'su': ['', 'す'], 'se': ['', 'せ'], 'so': ['', 'そ'],
-            'ta': ['', 'た'], 'ti': ['', 'ち'], 'tu': ['', 'つ'], 'te': ['', 'て'], 'to': ['', 'と'],
-            'na': ['', 'な'], 'ni': ['', 'に'], 'nu': ['', 'ぬ'], 'ne': ['', 'ね'], 'no': ['', 'の'],
-            'ha': ['', 'は'], 'hi': ['', 'ひ'], 'hu': ['', 'ふ'], 'he': ['', 'へ'], 'ho': ['', 'ほ'],
-            'ma': ['', 'ま'], 'mi': ['', 'み'], 'mu': ['', 'む'], 'me': ['', 'め'], 'mo': ['', 'も'],
-            'ya': ['', 'や'], 'yu': ['', 'ゆ'], 'yo': ['', 'よ'],
-            'ra': ['', 'ら'], 'ri': ['', 'り'], 'ru': ['', 'る'], 're': ['', 'れ'], 'ro': ['', 'ろ'],
-            'wa': ['', 'わ'], 'wo': ['', 'を'], 'nn': ['', 'ん'],
-            'ga': ['', 'が'], 'gi': ['', 'ぎ'], 'gu': ['', 'ぐ'], 'ge': ['', 'げ'], 'go': ['', 'ご'],
-            'za': ['', 'ざ'], 'zi': ['', 'じ'], 'zu': ['', 'ず'], 'ze': ['', 'ぜ'], 'zo': ['', 'ぞ'],
-            'da': ['', 'だ'], 'di': ['', 'ぢ'], 'du': ['', 'づ'], 'de': ['', 'で'], 'do': ['', 'ど'],
-            'ba': ['', 'ば'], 'bi': ['', 'び'], 'bu': ['', 'ぶ'], 'be': ['', 'べ'], 'bo': ['', 'ぼ'],
-            'pa': ['', 'ぱ'], 'pi': ['', 'ぴ'], 'pu': ['', 'ぷ'], 'pe': ['', 'ぺ'], 'po': ['', 'ぽ'],
-            'kya': ['', 'きゃ'], 'kyu': ['', 'きゅ'], 'kyo': ['', 'きょ'],
-            'sya': ['', 'しゃ'], 'syu': ['', 'しゅ'], 'syo': ['', 'しょ'],
-            'tya': ['', 'ちゃ'], 'tyu': ['', 'ちゅ'], 'tyo': ['', 'ちょ'],
-            'nya': ['', 'にゃ'], 'nyu': ['', 'にゅ'], 'nyo': ['', 'にょ'],
-            'hya': ['', 'ひゃ'], 'hyu': ['', 'ひゅ'], 'hyo': ['', 'ひょ'],
-            'mya': ['', 'みゃ'], 'myu': ['', 'みゅ'], 'myo': ['', 'みょ'],
-            'rya': ['', 'りゃ'], 'ryu': ['', 'りゅ'], 'ryo': ['', 'りょ'],
-            'gya': ['', 'ぎゃ'], 'gyu': ['', 'ぎゅ'], 'gyo': ['', 'ぎょ'],
-            'zya': ['', 'じゃ'], 'zyu': ['', 'じゅ'], 'zyo': ['', 'じょ'],
-            'bya': ['', 'びゃ'], 'byu': ['', 'びゅ'], 'byo': ['', 'びょ'],
-            'pya': ['', 'ぴゃ'], 'pyu': ['', 'ぴゅ'], 'pyo': ['', 'ぴょ'],
-            // 入力途中の状態（子音のみ）
-            'k': ['a,i,u,e,o,ya,yu,yo', ''], 's': ['a,i,u,e,o,ya,yu,yo', ''], 
-            't': ['a,i,u,e,o,ya,yu,yo', ''], 'n': ['a,i,u,e,o,ya,yu,yo,n', ''],
-            'h': ['a,i,u,e,o,ya,yu,yo', ''], 'm': ['a,i,u,e,o,ya,yu,yo', ''],
-            'y': ['a,u,o', ''], 'r': ['a,i,u,e,o,ya,yu,yo', ''],
-            'w': ['a,o', ''], 'g': ['a,i,u,e,o,ya,yu,yo', ''],
-            'z': ['a,i,u,e,o,ya,yu,yo', ''], 'd': ['a,i,u,e,o', ''],
-            'b': ['a,i,u,e,o,ya,yu,yo', ''], 'p': ['a,i,u,e,o,ya,yu,yo', ''],
-            ',': ['', '、'], '.': ['', '。'], '!': ['', '！'], '?': ['', '？'],
-            '-': ['', 'ー'], '~': ['', '〜'], ' ': ['', ' '],
-            'n': ['a,i,u,e,o,ya,yu,yo,n', 'ん'], // n が単独で「ん」になるケースは文脈次第なので簡易的に
-        };
-
-        // 時間帯別の挨拶とメッセージ
+        // 時間帯別の挨拶とメッセージ（ローマ字付き）
         const phrases = {
             morning: {
-                greeting: "おはよう！",
+                greeting: { jp: "おはよう！", romaji: "ohayou!" },
                 messages: [
-                    "今日もいい天気になりそうですね。",
-                    "朝の空気は気持ちいいですね。",
-                    "ゆっくり過ごせそうな朝ですね。",
-                    "今日は何をしようかな？",
-                    "素敵な一日になりますように。"
+                    { jp: "今日もいい天気になりそうですね。", romaji: "kyoumo iitenkini narisoudesune." },
+                    { jp: "朝の空気は気持ちいいですね。", romaji: "asano kuukiha kimochiii desune." },
+                    { jp: "ゆっくり過ごせそうな朝ですね。", romaji: "yukkuri sugosesouna asadesune." },
+                    { jp: "今日は何をしようかな？", romaji: "kyouha naniwo shiyoukana?" },
+                    { jp: "素敵な一日になりますように。", romaji: "sutekina ichinichini narimasuyouni." }
                 ]
             },
             day: {
-                greeting: "こんにちは！",
+                greeting: { jp: "こんにちは！", romaji: "konnnichiha!" },
                 messages: [
-                    "ちょっと一息つきませんか？",
-                    "今日は何かいいことありましたか？",
-                    "お昼ごはんはもう食べましたか？",
-                    "リラックスして過ごしてくださいね。",
-                    "元気に過ごせていますように。"
+                    { jp: "ちょっと一息つきませんか？", romaji: "chotto hitoiki tsukimasenka?" },
+                    { jp: "今日は何かいいことありましたか？", romaji: "kyouha nanika iikoto arimashitaka?" },
+                    { jp: "お昼ごはんはもう食べましたか？", romaji: "ohirugohanha mou tabemashitaka?" },
+                    { jp: "リラックスして過ごしてくださいね。", romaji: "rilakkusu shite sugoshitekudasaine." },
+                    { jp: "元気に過ごせていますように。", romaji: "genkini sugosete imasuyouni." }
                 ]
             },
             night: {
-                greeting: "こんばんは！",
+                greeting: { jp: "こんばんは！", romaji: "konbanha!" },
                 messages: [
-                    "今日も一日お疲れ様でした。",
-                    "ゆっくり休んでくださいね。",
-                    "夜の時間を楽しんでいますか？",
-                    "明日もいい日になりますように。",
-                    "暖かくしてゆっくりしてくださいね。",
-                    "おやすみなさい、また明日。"
+                    { jp: "今日も一日お疲れ様でした。", romaji: "kyoumo ichinichi otsukaresamadeshita." },
+                    { jp: "ゆっくり休んでくださいね。", romaji: "yukkuri yasundekudasaine." },
+                    { jp: "夜の時間を楽しんでいますか？", romaji: "yoruno jikanwo tanoshindeimasuka?" },
+                    { jp: "明日もいい日になりますように。", romaji: "asumo iihini narimasuyouni." },
+                    { jp: "暖かくしてゆっくりしてくださいね。", romaji: "atatakaku shite yukkuri shitekudasaine." },
+                    { jp: "おやすみなさい、また明日。", romaji: "oyasuminasai, mataashita." }
                 ]
             }
         };
 
-        // 日本語テキスト→ローマ字シーケンスに分解
-        function textToRomajiSequence(text) {
-            const map = {
-                'あ':'a','い':'i','う':'u','え':'e','お':'o',
-                'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
-                'さ':'sa','し':'si','す':'su','せ':'se','そ':'so',
-                'た':'ta','ち':'ti','つ':'tu','て':'te','と':'to',
-                'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
-                'は':'ha','ひ':'hi','ふ':'hu','へ':'he','ほ':'ho',
-                'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
-                'や':'ya','ゆ':'yu','よ':'yo',
-                'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
-                'わ':'wa','を':'wo','ん':'nn',
-                'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
-                'ざ':'za','じ':'zi','ず':'zu','ぜ':'ze','ぞ':'zo',
-                'だ':'da','ぢ':'di','づ':'du','で':'de','ど':'do',
-                'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo',
-                'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
-                'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
-                'しゃ':'sya','しゅ':'syu','しょ':'syo',
-                'ちゃ':'tya','ちゅ':'tyu','ちょ':'tyo',
-                'にゃ':'nya','にゅ':'nyu','にょ':'nyo',
-                'ひゃ':'hya','ひゅ':'hyu','ひょ':'hyo',
-                'みゃ':'mya','みゅ':'myu','みょ':'myo',
-                'りゃ':'rya','りゅ':'ryu','りょ':'ryo',
-                'ぎゃ':'gya','ぎゅ':'gyu','ぎょ':'gyo',
-                'じゃ':'zya','じゅ':'zyu','じょ':'zyo',
-                'びゃ':'bya','びゅ':'byu','びょ':'byo',
-                'ぴゃ':'pya','ぴゅ':'pyu','ぴょ':'pyo',
-                'っ':'xtu','、':',','。':'.','！':'!','？':'?',
-                'ー':'-','〜':'~',' ':' '
-            };
-            
-            let sequence = [];
+        // ローマ字変換マッピング
+        const romajiMap = {
+            'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+            'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+            'さ': 'sa', 'し': 'si', 'す': 'su', 'せ': 'se', 'そ': 'so',
+            'た': 'ta', 'ち': 'ti', 'つ': 'tu', 'て': 'te', 'と': 'to',
+            'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+            'は': 'ha', 'ひ': 'hi', 'ふ': 'hu', 'へ': 'he', 'ほ': 'ho',
+            'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+            'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+            'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+            'わ': 'wa', 'を': 'wo', 'ん': 'nn',
+            'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+            'ざ': 'za', 'じ': 'zi', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+            'だ': 'da', 'ぢ': 'di', 'づ': 'du', 'で': 'de', 'ど': 'do',
+            'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+            'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
+            'きゃ': 'kya', 'きゅ': 'kyu', 'きょ': 'kyo',
+            'しゃ': 'sya', 'しゅ': 'syu', 'しょ': 'syo',
+            'ちゃ': 'tya', 'ちゅ': 'tyu', 'ちょ': 'tyo',
+            'にゃ': 'nya', 'にゅ': 'nyu', 'にょ': 'nyo',
+            'ひゃ': 'hya', 'ひゅ': 'hyu', 'ひょ': 'hyo',
+            'みゃ': 'mya', 'みゅ': 'myu', 'みょ': 'myo',
+            'りゃ': 'rya', 'りゅ': 'ryu', 'りょ': 'ryo',
+            'ぎゃ': 'gya', 'ぎゅ': 'gyu', 'ぎょ': 'gyo',
+            'じゃ': 'zya', 'じゅ': 'zyu', 'じょ': 'zyo',
+            'びゃ': 'bya', 'びゅ': 'byu', 'びょ': 'byo',
+            'ぴゃ': 'pya', 'ぴゅ': 'pyu', 'ぴょ': 'pyo',
+            'っ': 'xtu', '、': ',', '。': '.', '！': '!', '？': '?',
+            'ー': '-', '〜': '~', ' ': ' '
+        };
+
+        function jpToRomaji(text) {
+            let result = '';
             let i = 0;
             while (i < text.length) {
-                let found = false;
-                // 3文字チェック
-                if (i + 2 < text.length && map[text.slice(i, i + 3)]) {
-                    sequence.push(map[text.slice(i, i + 3)]);
+                // 3文字の組み合わせをチェック
+                if (i + 2 < text.length && romajiMap[text.slice(i, i + 3)]) {
+                    result += romajiMap[text.slice(i, i + 3)];
                     i += 3;
-                    found = true;
                 }
-                // 2文字チェック
-                else if (i + 1 < text.length && map[text.slice(i, i + 2)]) {
-                    sequence.push(map[text.slice(i, i + 2)]);
+                // 2文字の組み合わせをチェック
+                else if (i + 1 < text.length && romajiMap[text.slice(i, i + 2)]) {
+                    result += romajiMap[text.slice(i, i + 2)];
                     i += 2;
-                    found = true;
                 }
-                // 1文字チェック
-                else if (map[text[i]]) {
-                    sequence.push(map[text[i]]);
+                // 1文字をチェック
+                else if (romajiMap[text[i]]) {
+                    result += romajiMap[text[i]];
                     i++;
-                    found = true;
                 }
+                // マッピングにない文字はそのまま
                 else {
-                    sequence.push(text[i]);
+                    result += text[i];
                     i++;
                 }
             }
-            return sequence;
-        }
-
-        // ローマ字シーケンスを1文字ずつのタイピングシーケンスに分解
-        // 例: 'ka' → ['k', 'a']  と表示、'a'を打った瞬間「か」が確定
-        function romajiToTypingSequence(romaji) {
-            let chars = [];
-            for (let i = 0; i < romaji.length; i++) {
-                chars.push({
-                    char: romaji[i],
-                    isComplete: (i === romaji.length - 1) // 最後の文字で確定
-                });
-            }
-            return chars;
-        }
-
-        let currentTimeZone = null;
-        let animationRunning = false;
-        let abortFlag = false;
-
-        function getTimeZone() {
-            const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) return 'morning';
-            else if (hour >= 12 && hour < 18) return 'day';
-            else return 'night';
+            return result;
         }
 
         async function typeReal() {
-            if (animationRunning) {
-                abortFlag = true;
-                // 現在のアニメーションが終わるのを待つ
-                await new Promise(r => setTimeout(r, 200));
-            }
-            
-            animationRunning = true;
-            abortFlag = false;
-            currentTimeZone = getTimeZone();
-            
             const container = document.getElementById('text-container');
-            const category = phrases[currentTimeZone];
+            const hour = new Date().getHours();
+            
+            // 時間帯の決定
+            let category;
+            if (hour >= 5 && hour < 12) category = phrases.morning;
+            else if (hour >= 12 && hour < 18) category = phrases.day;
+            else category = phrases.night;
+            
+            // 挨拶＋ランダムメッセージを選択
+            const greeting = category.greeting;
             const randomMessage = category.messages[Math.floor(Math.random() * category.messages.length)];
-            const fullText = category.greeting + randomMessage;
+            const fullText = greeting.jp + randomMessage.jp;
+            
+            // 日本語からローマ字を生成
+            const romaji = greeting.romaji + randomMessage.romaji;
             
             // 既存の要素をクリア
             container.innerHTML = '';
@@ -241,82 +174,29 @@
             romajiDiv.className = 'romaji';
             container.appendChild(romajiDiv);
             
-            const jpDiv = document.createElement('div');
-            jpDiv.className = 'jp';
-            jpDiv.style.opacity = '0';
-            jpDiv.style.transform = 'translateX(-50%) translateY(20px)';
-            container.appendChild(jpDiv);
-            
-            // 表示用：ローマ字（確定部分 + 未確定部分） + かな（確定部分）
-            let displayRomaji = '';   // 表示用ローマ字全体
-            let displayKana = '';     // 確定かな
-            
-            // 全テキストのローマ字シーケンスを取得
-            const romajiSequence = textToRomajiSequence(fullText);
-            
-            // 各ローマ字ブロックを1文字ずつタイピング
-            for (let blockIndex = 0; blockIndex < romajiSequence.length; blockIndex++) {
-                if (abortFlag) { animationRunning = false; return; }
-                
-                const block = romajiSequence[blockIndex];
-                const typingChars = romajiToTypingSequence(block);
-                
-                for (let charIndex = 0; charIndex < typingChars.length; charIndex++) {
-                    if (abortFlag) { animationRunning = false; return; }
-                    
-                    displayRomaji += typingChars[charIndex].char;
-                    
-                    // 「ら」を打つとき：Rを表示 → Aを打った瞬間「ら」に変換
-                    if (typingChars[charIndex].isComplete) {
-                        // ブロック完了：かなに変換
-                        const completedRomaji = block;
-                        let convertedKana = '';
-                        // 変換テーブルから検索
-                        if (romajiToKanaMap[completedRomaji]) {
-                            convertedKana = romajiToKanaMap[completedRomaji][1];
-                        } else {
-                            convertedKana = completedRomaji; // fallback
-                        }
-                        displayKana += convertedKana;
-                    }
-                    
-                    // 表示更新
-                    romajiDiv.innerHTML = displayRomaji + '<span class="cursor"></span>';
-                    jpDiv.innerText = displayKana;
-                    
-                    await new Promise(r => setTimeout(r, 80));
-                }
+            // ローマ字を1文字ずつタイピング表示
+            for (let i = 0; i <= romaji.length; i++) {
+                romajiDiv.innerHTML = romaji.slice(0, i) + '<span class="cursor"></span>';
+                await new Promise(r => setTimeout(r, 80));
             }
             
-            if (abortFlag) { animationRunning = false; return; }
+            // 少し待ってから日本語に切り替え
+            await new Promise(r => setTimeout(r, 600));
             
-            // タイピング完了：ローマ字をフェードアウト、かなをフェードイン
-            await new Promise(r => setTimeout(r, 500));
+            const jpDiv = document.createElement('div');
+            jpDiv.className = 'jp';
+            jpDiv.innerText = fullText;
+            container.appendChild(jpDiv);
             
+            await new Promise(r => setTimeout(r, 100));
             romajiDiv.style.opacity = '0';
             romajiDiv.style.transform = 'translateX(-50%) translateY(-20px)';
             jpDiv.style.opacity = '1';
             jpDiv.style.transform = 'translateX(-50%) translateY(0)';
             
-            // 8秒間表示
+            // アニメーション完了後、8秒後に次のメッセージへ
             await new Promise(r => setTimeout(r, 8000));
-            
-            if (abortFlag) { animationRunning = false; return; }
-            
-            animationRunning = false;
-            typeReal(); // 次のメッセージへ
-        }
-
-        // 時間帯変更を監視
-        function watchTimeZone() {
-            setInterval(() => {
-                const newZone = getTimeZone();
-                if (newZone !== currentTimeZone) {
-                    // 時間帯が変わった！リセットして最初から
-                    currentTimeZone = newZone;
-                    typeReal();
-                }
-            }, 1000); // 1秒ごとにチェック
+            typeReal();
         }
 
         function playMusic(url) {
@@ -329,7 +209,6 @@
         }
 
         typeReal();
-        watchTimeZone();
     </script>
 </body>
 </html>
