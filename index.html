@@ -8,7 +8,6 @@
         body { background: #0f172a; color: white; font-family: 'Courier New', monospace; text-align: center; padding: 20px; margin: 0; }
         .hero { margin: 40px 0; min-height: 200px; }
         
-        /* タイピングエリアの親要素を中央寄せに固定 */
         #typing-area { 
             font-size: 1.5rem; 
             color: #fb7185; 
@@ -55,12 +54,100 @@
     </a>
 
     <script>
-        // 時間帯別の挨拶とメッセージ
+        // 時間帯別の挨拶とメッセージ（ローマ字付き）
         const phrases = {
-            morning: ["おはよう！", "今日も頑張ろう！", "朝のゲーム開発は最高だね。"],
-            day: ["こんにちは！", "いい気分ですね。", "何か面白いこと探してる？"],
-            night: ["こんばんは！", "ゆっくりしていってね。", "夜更かししすぎないようにね。"]
+            morning: {
+                greeting: { jp: "おはよう！", romaji: "ohayou!" },
+                messages: [
+                    { jp: "今日もいい天気になりそうですね。", romaji: "kyoumo iitenkini narisoudesune." },
+                    { jp: "朝の空気は気持ちいいですね。", romaji: "asano kuukiha kimochiii desune." },
+                    { jp: "ゆっくり過ごせそうな朝ですね。", romaji: "yukkuri sugosesouna asadesune." },
+                    { jp: "今日は何をしようかな？", romaji: "kyouha naniwo shiyoukana?" },
+                    { jp: "素敵な一日になりますように。", romaji: "sutekina ichinichini narimasuyouni." }
+                ]
+            },
+            day: {
+                greeting: { jp: "こんにちは！", romaji: "konnnichiha!" },
+                messages: [
+                    { jp: "ちょっと一息つきませんか？", romaji: "chotto hitoiki tsukimasenka?" },
+                    { jp: "今日は何かいいことありましたか？", romaji: "kyouha nanika iikoto arimashitaka?" },
+                    { jp: "お昼ごはんはもう食べましたか？", romaji: "ohirugohanha mou tabemashitaka?" },
+                    { jp: "リラックスして過ごしてくださいね。", romaji: "rilakkusu shite sugoshitekudasaine." },
+                    { jp: "元気に過ごせていますように。", romaji: "genkini sugosete imasuyouni." }
+                ]
+            },
+            night: {
+                greeting: { jp: "こんばんは！", romaji: "konbanha!" },
+                messages: [
+                    { jp: "今日も一日お疲れ様でした。", romaji: "kyoumo ichinichi otsukaresamadeshita." },
+                    { jp: "ゆっくり休んでくださいね。", romaji: "yukkuri yasundekudasaine." },
+                    { jp: "夜の時間を楽しんでいますか？", romaji: "yoruno jikanwo tanoshindeimasuka?" },
+                    { jp: "明日もいい日になりますように。", romaji: "asumo iihini narimasuyouni." },
+                    { jp: "暖かくしてゆっくりしてくださいね。", romaji: "atatakaku shite yukkuri shitekudasaine." },
+                    { jp: "おやすみなさい、また明日。", romaji: "oyasuminasai, mataashita." }
+                ]
+            }
         };
+
+        // ローマ字変換マッピング
+        const romajiMap = {
+            'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
+            'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
+            'さ': 'sa', 'し': 'si', 'す': 'su', 'せ': 'se', 'そ': 'so',
+            'た': 'ta', 'ち': 'ti', 'つ': 'tu', 'て': 'te', 'と': 'to',
+            'な': 'na', 'に': 'ni', 'ぬ': 'nu', 'ね': 'ne', 'の': 'no',
+            'は': 'ha', 'ひ': 'hi', 'ふ': 'hu', 'へ': 'he', 'ほ': 'ho',
+            'ま': 'ma', 'み': 'mi', 'む': 'mu', 'め': 'me', 'も': 'mo',
+            'や': 'ya', 'ゆ': 'yu', 'よ': 'yo',
+            'ら': 'ra', 'り': 'ri', 'る': 'ru', 'れ': 're', 'ろ': 'ro',
+            'わ': 'wa', 'を': 'wo', 'ん': 'nn',
+            'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
+            'ざ': 'za', 'じ': 'zi', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
+            'だ': 'da', 'ぢ': 'di', 'づ': 'du', 'で': 'de', 'ど': 'do',
+            'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
+            'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
+            'きゃ': 'kya', 'きゅ': 'kyu', 'きょ': 'kyo',
+            'しゃ': 'sya', 'しゅ': 'syu', 'しょ': 'syo',
+            'ちゃ': 'tya', 'ちゅ': 'tyu', 'ちょ': 'tyo',
+            'にゃ': 'nya', 'にゅ': 'nyu', 'にょ': 'nyo',
+            'ひゃ': 'hya', 'ひゅ': 'hyu', 'ひょ': 'hyo',
+            'みゃ': 'mya', 'みゅ': 'myu', 'みょ': 'myo',
+            'りゃ': 'rya', 'りゅ': 'ryu', 'りょ': 'ryo',
+            'ぎゃ': 'gya', 'ぎゅ': 'gyu', 'ぎょ': 'gyo',
+            'じゃ': 'zya', 'じゅ': 'zyu', 'じょ': 'zyo',
+            'びゃ': 'bya', 'びゅ': 'byu', 'びょ': 'byo',
+            'ぴゃ': 'pya', 'ぴゅ': 'pyu', 'ぴょ': 'pyo',
+            'っ': 'xtu', '、': ',', '。': '.', '！': '!', '？': '?',
+            'ー': '-', '〜': '~', ' ': ' '
+        };
+
+        function jpToRomaji(text) {
+            let result = '';
+            let i = 0;
+            while (i < text.length) {
+                // 3文字の組み合わせをチェック
+                if (i + 2 < text.length && romajiMap[text.slice(i, i + 3)]) {
+                    result += romajiMap[text.slice(i, i + 3)];
+                    i += 3;
+                }
+                // 2文字の組み合わせをチェック
+                else if (i + 1 < text.length && romajiMap[text.slice(i, i + 2)]) {
+                    result += romajiMap[text.slice(i, i + 2)];
+                    i += 2;
+                }
+                // 1文字をチェック
+                else if (romajiMap[text[i]]) {
+                    result += romajiMap[text[i]];
+                    i++;
+                }
+                // マッピングにない文字はそのまま
+                else {
+                    result += text[i];
+                    i++;
+                }
+            }
+            return result;
+        }
 
         async function typeReal() {
             const container = document.getElementById('text-container');
@@ -72,31 +159,44 @@
             else if (hour >= 12 && hour < 18) category = phrases.day;
             else category = phrases.night;
             
-            // 挨拶＋ランダムメッセージ
-            const fullText = category[0] + category[Math.floor(Math.random() * (category.length - 1)) + 1];
+            // 挨拶＋ランダムメッセージを選択
+            const greeting = category.greeting;
+            const randomMessage = category.messages[Math.floor(Math.random() * category.messages.length)];
+            const fullText = greeting.jp + randomMessage.jp;
             
-            // ローマ字変換（簡易版）
-            const romaji = "konnnitiwa"; // ここを動的にするのは非常に複雑なため、固定値で「タイピング感」を演出
+            // 日本語からローマ字を生成
+            const romaji = greeting.romaji + randomMessage.romaji;
+            
+            // 既存の要素をクリア
+            container.innerHTML = '';
             
             const romajiDiv = document.createElement('div');
             romajiDiv.className = 'romaji';
             container.appendChild(romajiDiv);
             
+            // ローマ字を1文字ずつタイピング表示
             for (let i = 0; i <= romaji.length; i++) {
                 romajiDiv.innerHTML = romaji.slice(0, i) + '<span class="cursor"></span>';
-                await new Promise(r => setTimeout(r, 100));
+                await new Promise(r => setTimeout(r, 80));
             }
+            
+            // 少し待ってから日本語に切り替え
+            await new Promise(r => setTimeout(r, 600));
             
             const jpDiv = document.createElement('div');
             jpDiv.className = 'jp';
             jpDiv.innerText = fullText;
             container.appendChild(jpDiv);
             
-            await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 100));
             romajiDiv.style.opacity = '0';
             romajiDiv.style.transform = 'translateX(-50%) translateY(-20px)';
             jpDiv.style.opacity = '1';
             jpDiv.style.transform = 'translateX(-50%) translateY(0)';
+            
+            // アニメーション完了後、8秒後に次のメッセージへ
+            await new Promise(r => setTimeout(r, 8000));
+            typeReal();
         }
 
         function playMusic(url) {
